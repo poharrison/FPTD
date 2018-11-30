@@ -9,6 +9,7 @@ from scipy import linalg as LA
 NBINS = 6
 # List of initial bins
 INIT_BINS = [4]
+# List of Target Bins
 TARGET_BINS = [1]
 
 if INIT_BINS[0] == 4:
@@ -16,15 +17,16 @@ if INIT_BINS[0] == 4:
 else:
     CBINS = [1, 3, 5]
 
-# List of target bins
+# merged_rates: number of bins which are NOT target bins
 merged_rates = np.empty(NBINS - len(TARGET_BINS))
+
 # Transition matrix K
-K = np.array([ [0, 0, 0, 0, 0, 0 ],
+K = np.array([[0, 0, 0, 0, 0, 0],
       [0, 9.55068356e-01, 0, 4.49316443e-02, 0, 0],
       [0, 9.12453457e-05, 9.79353834e-01, 0, 2.05549202e-02, 0],
       [0, 1.34211520e-02, 0, 9.84648708e-01, 1.93013968e-03, 0.00000000e+00],
       [0, 0, 3.45887083e-02, 0, 9.65411292e-01, 0],
-      [0, 0, 0, 0, 0, 0] ])
+      [0, 0, 0, 0, 0, 0]])
 
 f = h5py.File("reweight.h5")
 
@@ -41,10 +43,10 @@ for iter in f['iterations'].keys():
 
 dell = []
 for row in range(n_bins):
-    if trans_m[row,:].sum() == 0:
+    if trans_m[row, :].sum() == 0:
         dell.append(row)
     else:
-        trans_m[row,:] /= trans_m[row,:].sum()
+        trans_m[row, :] /= trans_m[row,:].sum()
 
 if False:
     print(dell)
