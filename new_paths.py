@@ -1,7 +1,5 @@
 import numpy as np
 import h5py
-
-#from numpy import linalg as LA
 from scipy import linalg as LA
 
 # Bound State: 0,2,4
@@ -13,17 +11,10 @@ NBINS = 6
 INIT_BINS = [4]
 TARGET_BINS = [1]
 
-# INIT_BINS = [1]
-# TARGET_BINS = [4]
-
 if INIT_BINS[0] == 4:
     CBINS = [0, 2, 4]
 else:
     CBINS = [1, 3, 5]
-
-# ABINS = [1, 3, 5, 4]
-# ABINS = [0, 2, 4, 5]
-
 
 # List of target bins
 merged_rates = np.empty(NBINS - len(TARGET_BINS))
@@ -47,9 +38,6 @@ for iter in f['iterations'].keys():
     cols = grp['cols']
     flux = grp['flux']
     trans_m[rows, cols] += flux
-
-# trans_m[I_ENSEMBLE,:] = 0
-# trans_m[:,I_ENSEMBLE] = 0
 
 dell = []
 for row in range(n_bins):
@@ -78,9 +66,6 @@ if False:
     print(trans_m)
 K = np.nan_to_num(trans_m)
 print(K)
-# K = trans_m
-
-# K = K[CBINS,CBINS]
 
 eigvals, eigvecs = LA.eig(K.T)
 unity = (np.abs(np.real(eigvals) - 1)).argmin()
@@ -114,26 +99,14 @@ ITER = 1600000
 # ITER = 0
 # 100 iterations?
 for i in range(ITER):
-#while np.all(pp_dist == p_dist):
-    #print(p_dist)
-    #np_dist = K.T.dot(p_dist)
     np_dist = np.dot(K,
               p_dist - np.diag(np.diag(p_dist)))
-    #histogram.append((np_dist[TARGET_BINS].sum() - p_dist[TARGET_BINS].sum())*(p_dist[INIT_BINS].sum()))
-    #print(np_dist)
-    histogram.append(np_dist[INIT_BINS,TARGET_BINS]*eq_pop[CBINS].sum())
-    #histogram.append((np_dist[TARGET_BINS].sum())/(p_dist[I_ENSEMBLE].sum()))
-    #histogram.append((np_dist[TARGET_BINS].sum() - p_dist[TARGET_BINS].sum()))
-    #np_dist /= np_dist.sum()
+    histogram.append(np_dist[INIT_BINS, TARGET_BINS]*eq_pop[CBINS].sum())
     p_dist = np_dist
-    #ITER += 1
-    #print(histogram)
 
 dt = 101
 
-print(np.nan_to_num(histogram).shape, len(range(1,ITER+1)))
-#print(ITER, (np.average(range(1,ITER+1), weights=np.nan_to_num(histogram)[:,0])*eq_pop[CBINS].sum())/11)
-#print(ITER, (np.average(range(1,ITER+1), weights=np.nan_to_num(histogram)[:,0])/11))
+print(np.nan_to_num(histogram).shape, len(range(1, ITER+1)))
 print(ITER, (np.average(range(1,ITER+1), weights=np.nan_to_num(histogram)[:,0])/dt))
 print(eq_pop)
 print(eq_pop[CBINS].sum())

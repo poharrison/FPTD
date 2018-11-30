@@ -11,14 +11,15 @@ INIT_BINS = [0]
 TARGET_BINS = [2]
 # Merge the rates for each bin not in target bins to all bins in target bins
 # ie. each non target bin has a single rate into TARGET_BINS rather than a rate for each bin in target bins
-merged_rates = np.empty(NBINS - len(TARGET_BINS))
+merged_rates = np.empty(NBINS)
 
 # Transition matrix K.
 K = np.array([[0.43871389, 0.29933964, 0.87257363], [0.78913289, 0.23298078, 0.99836441],
                  [0.36616367, 0.13101896, 0.57178222]])
 
-# probability of starting in init bin A.
-distr_prob = np.random.rand(len(INIT_BINS))
+# probability of starting in init bin A for all .
+# distr_prob = np.random.rand(len(INIT_BINS))
+distr_prob = np.random.rand(NBINS)
 
 # paths = [[<list of probabilities of all paths with N = 1>],
 #            [<list of probabilities of all paths with N = 2>],
@@ -59,7 +60,7 @@ def walk(rate, loc):
     return list((rate * K[loc, b], b) for b in t_bins)
 
 
-# Calculate the effective MFPT (MFPT of sampled paths).
+# Calculate the numerator of the effective MFPT (MFPT of sampled paths).
 def calc_emfpt_sum(path_length, path=None, emfpt=0):
     path_sum = np.sum(path)  # * N (time steps for this path set?)
     print("Path sum ", path_sum)
@@ -70,7 +71,8 @@ if __name__ == '__main__':
     merge_rates()
     # For N = 1, probability is simply the rate of transitioning from the initial bin
     # to any bin in target state * the probability of starting in the initial bin
-    # rates: a list of probabilities and bins, with each probability-bin pair stored as a tuple: (probability of getting to bin by some path, # of that bin)
+    # rates: a list of probabilities and bins, with each probability-bin pair stored
+    # as a tuple: (probability of getting to bin by some path, # of that bin)
     # ie. rates = list of (probability of getting to bin by some path N, bin #) for all paths (of length N)
     # and non target bins. So, rates can have multiple tuples with the same bin #, with a different path to get to
     # that bin in the number of timesteps N (ie. same bin # but different probability)
@@ -93,7 +95,7 @@ if __name__ == '__main__':
                     temp.append(item)
             rates = temp
             # Update emfpt to include newly sampled paths.
-            emfpt_sum = calc_emfpt_sum(paths[i-1], emfpt_sum, i)
+            emfpt_sum = calc_emfpt_sum(i, paths[i-1], emfpt_sum)
             emfpt = emfpt_sum/i
             i += 1
             print(rates)
