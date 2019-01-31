@@ -12,17 +12,19 @@ NBINS = [int(input("Total number of bins: "))
 NBINS = 6
 # List of initial bins
 """ 
-INIT_BINS = [int(x.replace(',', '')) for x in input("Please list the initial bins (Ex. 1, 2, 3, 4)").split()]
+INIT_BINS = list(int(x.replace(',', '')) for x in input("Please list the initial bins (Ex. 1, 2, 3, 4)").split())
 """
 INIT_BINS = [4]
 # List of Target Bins
 """
-TARGET_BINS = [int(x.replace(',', '')) for x in input("Please list the target bins (Ex. 1, 2, 3, 4)").split()]
+TARGET_BINS = list(int(x.replace(',', '')) for x in input("Please list the target bins (Ex. 1, 2, 3, 4)").split())
 """
 TARGET_BINS = [1]
+
 # What is CBINS? is it all bins which are not target bins?
 # t_bins = list(x for x in range(0, NBINS) if x not in TARGET_BINS) (generalized version)
-# works only if bins numbers start at 5 and end at NBINS -- ask audrey if that numbering is std
+# works only if bins numbers start at 5 and end at NBINS -- ask audrey
+# if that numbering is std
 if INIT_BINS[0] == 4:
     CBINS = [0, 2, 4]
 else:
@@ -32,6 +34,7 @@ else:
 merged_rates = np.empty(NBINS - len(TARGET_BINS))
 
 # Transition matrix K
+# where is this got from in the general case?
 K = np.array([[0, 0, 0, 0, 0, 0],
       [0, 9.55068356e-01, 0, 4.49316443e-02, 0, 0],
       [0, 9.12453457e-05, 9.79353834e-01, 0, 2.05549202e-02, 0],
@@ -42,7 +45,7 @@ K = np.array([[0, 0, 0, 0, 0, 0],
 f = h5py.File("reweight.h5")
 
 # Total number of bins
-# CALCULATE THIS NUM AUTOMATICALLY
+# CALCULATE THIS NUM AUTOMATICALLY?
 # n_bins = NBINS (lol? these vars are redundant)
 n_bins = 6
 
@@ -63,7 +66,8 @@ for row in range(n_bins):
     else:
         trans_m[row, :] /= trans_m[row, :].sum()
 
-# Can this be removed? Code under if statement below would not execute bc condition is always False
+# Can this be removed? Code under if statement below would not execute bc condition
+# is always False
 if False:
     print(dell)
     n_bins -= len(dell)
@@ -97,3 +101,42 @@ print("eigenvectors", eigvecs)
 print("unity", unity)
 eq_pop = np.abs(np.real(eigvecs)[unity])
 eq_pop /= eq_pop.sum()
+
+# probability of starting in init bin A.
+distr_prob = np.random.rand(len(INIT_BINS))
+paths = []
+# t_bins: all bins which are not target bins.
+t_bins = list(x for x in range(0, NBINS) if x not in TARGET_BINS)
+# lower_bound = mfpt - error
+# lower_bound = 121.8
+lower_bound = 116
+
+
+# What is this? This is never used
+# Hmmm.  What about...
+p_dist = np.zeros(NBINS)
+p_dist[INIT_BINS] = 1.0/float(len(INIT_BINS))
+pp_dist = np.zeros(NBINS)
+p_dist = eq_pop
+
+p_dist = p_dist
+p_dist = np.zeros((NBINS,NBINS))
+p_dist = K.copy()
+
+histogram = []
+
+ITER = 1600000
+# ITER = 0
+# 100 iterations?
+for i in range(ITER):
+    np_dist = np.dot(K,
+              p_dist - np.diag(np.diag(p_dist)))
+    histogram.append(np_dist[INIT_BINS, TARGET_BINS]*eq_pop[CBINS].sum())
+    p_dist = np_dist
+
+dt = 101
+
+print(np.nan_to_num(histogram).shape, len(range(1, ITER+1)))
+print(ITER, (np.average(range(1,ITER+1), weights=np.nan_to_num(histogram)[:,0])/dt))
+print(eq_pop)
+print(eq_pop[CBINS].sum())
