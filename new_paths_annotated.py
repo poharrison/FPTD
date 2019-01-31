@@ -25,6 +25,9 @@ TARGET_BINS = [1]
 # t_bins = list(x for x in range(0, NBINS) if x not in TARGET_BINS) (generalized version)
 # works only if bins numbers start at 5 and end at NBINS -- ask audrey
 # if that numbering is std
+"""
+CBINS = list(x for x in range(0, NBINS) if x not in TARGET_BINS)
+"""
 if INIT_BINS[0] == 4:
     CBINS = [0, 2, 4]
 else:
