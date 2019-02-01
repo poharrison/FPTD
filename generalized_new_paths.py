@@ -1,7 +1,3 @@
-usr_input = input("Type something: ")
-print(usr_input)
-
-
 def get_bin_lists(bins_list_name):
     while True:
         try:
