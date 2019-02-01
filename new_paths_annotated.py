@@ -7,25 +7,25 @@ from scipy import linalg as LA
 
 # Total number of bins
 """ 
-NBINS = [int(input("Total number of bins: "))
+NBINS = int(input("Total number of bins: "))
 """
 NBINS = 6
 # List of initial bins
 """ 
-INIT_BINS = list(int(x.replace(',', '')) for x in input("Please list the initial bins (Ex. 1, 2, 3, 4)").split())
+INIT_BINS = list(int(x) for x in input("Please list the initial bins (Ex. 1, 2, 3, 4): ").split(","))
 """
 INIT_BINS = [4]
 # List of Target Bins
 """
-TARGET_BINS = list(int(x.replace(',', '')) for x in input("Please list the target bins (Ex. 1, 2, 3, 4)").split())
+TARGET_BINS = list(int(x) for x in input("Please list the target bins (Ex. 1, 2, 3, 4): ").split(","))
 """
 TARGET_BINS = [1]
 
 # What is CBINS? is it all bins which are not target bins?
-# t_bins = list(x for x in range(0, NBINS) if x not in TARGET_BINS) (generalized version)
-# works only if bins numbers start at 5 and end at NBINS -- ask audrey
-# if that numbering is std
+# if so, why is 3 not included in group below when INIT_BINS[0] == 4
+# Just odd and even bins? lol
 """
+Q: This generalized code only works if binning is done 0..N, is that how it normally is?
 CBINS = list(x for x in range(0, NBINS) if x not in TARGET_BINS)
 """
 if INIT_BINS[0] == 4:
